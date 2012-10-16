@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+<script>
+/*****************************************************************************************************************
+ *
+ * ADD YOUR FAVORITE CASTERS HERE
+ */ 
+	var casters = [
+					"ForceSC2strategy", "husky", "HuskyStarcraft", "remembertomorrow0", "BlizShouter", "day9tv" /* (don't add a comma after the last one! ;) */
+	];
+ /*
+ *****************************************************************************************************************/
+</script>
+        <title>SC2 video feed</title>
+		<script src="http://code.jquery.com/jquery-1.8.2.min.js"></script>
+		<script src="https://raw.github.com/layam/js_humanized_time_span/master/humanized_time_span.js"></script>
+		<script src="lscache.js"></script>
+		<link rel="stylesheet" href="isotope/css/style.css" />
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+    </head>
+    
+    <body class="demos">
+
+	  <section id="content">
+		  <section id="options" class="clearfix">
+		  <ul id="filters" class="option-set clearfix" data-option-key="filter">
+			<li><a href="#filter" data-option-value="*" id="option-select-all">show all channels</a></li>
+		  </ul>
+			<ul id="sort-by" class="option-set clearfix" data-option-key="sortBy">
+			  <li><a href="#sortBy=date" data-option-value="date">date</a></li>
+			  <li><a href="#sortBy=views" data-option-value="views">views</a></li>
+			</ul>
+			  </section>   
+	  
+  <div id="container" class="clearfix"></div>
+  
+ <script>			
+			for(i=0;i<casters.length;i++){
+				$('ul#filters').append('<li><a href="#filter" id="'+casters[i]+'" data-option-value="'+casters[i]+'">'+casters[i]+'</a></li>');
+
+			}
+			function getFeed(i){	
+				var fragment = '';
+				$.ajax({
+					type: "GET",
+					url: 'http://gdata.youtube.com/feeds/api/users/' + casters[i] + '/uploads?v=2&alt=jsonc&max-container=50',
+					cache: false,
+					dataType: 'jsonp',
+					success: function (data) {
+						$.each(data.data.items, function (index) {
+							if (isSC(this.title.toLowerCase())) {								
+								fragment += "<div class='element " + casters[i] + "'  data-symbol='"+ casters[i] +"' data-category='transition'  title='"+str_replace("'", "`", this.title)+"'><a href='" + getAttributeByIndex(this.player, 0) + "'><img src='" + this.thumbnail.sqDefault + "' /></a><h3><a href='" + getAttributeByIndex(this.player, 0) + "'>" + this.title.substr(0, 60) + "</a></h3><p>" + this.viewCount + " views - <abbr>" + humanized_time_span(this.uploaded) + "</abbr> </p></div>";
+							}
+						});
+						$('#container').append(fragment);
+					}
+				});
+			}
+			for(i=0;i<casters.length;i++){
+				getFeed(i);
+			}			
+			function isSC(e){
+				return (e.indexOf('starcraft') !== -1 || e.indexOf('hots') !== -1 || e.indexOf('sc2') !== -1) ? true : false;
+			} 
+			function str_replace(search, replace, subject, count) {
+				f = [].concat(search), r = [].concat(replace), s = subject, ra = r instanceof Array, sa = s instanceof Array; s = [].concat(s); if (count) { this.window[count] = 0; }
+				for (i = 0, sl = s.length; i < sl; i++) {
+					if (s[i] === '') { continue; }
+					for (j = 0, fl = f.length; j < fl; j++) { temp = s[i] + ''; repl = ra ? (r[j] !== undefined ? r[j] : '') : r[0]; s[i] = (temp).split(f[j]).join(repl); if (count && s[i] !== temp) { this.window[count] += (temp.length - s[i].length) / f[j].length; } } 
+				}
+				return sa ? s : s[0];
+			}
+            function getAttributeByIndex(obj, index) {
+                var i = 0;
+                for (var attr in obj) {
+                    if (index === i) {
+                        return obj[attr];
+                    }
+                    i++;
+                }
+                return null;
+            }
+
+        </script>
+
+
+  <script src="isotope/jquery.isotope.min.js"></script>
+  <script>
+    $(window).load(function(){
+      
+      var $container = $('#container');
+	  var defaultOption = lscache.get('scjs-options') || 'option-select-all';
+      $('#' + defaultOption).addClass('selected');
+	  $('#container').isotope({ filter: '.'+defaultOption });
+	  $container.isotope({
+        itemSelector : '.element'
+      });
+      
+      
+      var $optionSets = $('#options .option-set'),
+          $optionLinks = $optionSets.find('a');
+
+      $optionLinks.click(function(){
+        var $this = $(this);
+        if ( $this.hasClass('selected') ) {
+          return false;
+        }		
+		lscache.set('scjs-options', $this.attr('data-option-value') == '*' ? 'option-select-all' : $this.attr('data-option-value'));
+        var $optionSet = $this.parents('.option-set');
+        $optionSet.find('.selected').removeClass('selected');
+        $this.addClass('selected');
+  
+        var options = {},
+            key = $optionSet.attr('data-option-key'),
+            value = $this.attr('data-option-value');
+        value = value === 'false' ? false : value;
+        options[ key ] = value !== '*' ? '.' + value : value;
+        if ( key === 'layoutMode' && typeof changeLayoutMode === 'function' ) {
+			changeLayoutMode( $this, options )
+        } else {
+			$container.isotope( options );
+        }
+        
+        return false;
+      });
+	  $container.isotope('reLayout');
+    });
+  </script>
+  
+    
+  </section>
+	</body>
+</html>
