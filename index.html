@@ -1,1 +1,46 @@
-my pagex
+<!doctype html>
+<html lang="en">
+	<head>
+		
+		<script type="text/javascript">
+			/********************************************************************************
+			 *
+			 * ADD YOUR FAVORITE CASTERS HERE
+			 */
+			var casters = [
+							"ForceSC2strategy", 
+							"husky", 
+							"HuskyStarcraft", 
+							"remembertomorrow0", 
+							"BlizShouter", 
+							"day9tv"     /* (don't add a comma after the last one! ;) */
+			];
+			/*
+			 *********************************************************************************/
+		</script>
+		
+		<title>SC2 video feed</title>
+		<script src="jquery.js"></script>
+		<script src="humanized_time_span.js"></script>
+		<script src="lscache.js"></script>
+		<link rel="stylesheet" href="isotope/css/style.css" />
+		<link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
+	</head>
+
+	<body class="demos">
+
+		<section id="content">
+			<section id="options" class="clearfix">
+				<ul id="filters" class="option-set clearfix" data-option-key="filter">
+					<li>
+						<a href="#filter" data-option-value="*" id="option-select-all">show all channels</a>
+					</li>
+				</ul>
+			</section>
+
+			<div id="container" class="clearfix"> </div>
+			<script src="isotope/jquery.isotope.min.js"></script>
+			<script src="sc2.js"></script>
+		</section>
+	</body>
+</html>
